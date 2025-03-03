@@ -7,25 +7,22 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
     public Transform cameraTransform;
-
     private Vector3 velocity;
     private bool isGrounded;
-    private int jumpCount = 0; // Tracks the number of jumps
-    public int maxJumps = 2; // Set to 2 for double jump
 
+    // Ground check settings
     public Transform groundCheck;
     public LayerMask groundMask;
     public float groundDistance = 0.2f;
 
     void Update()
     {
+        // Improved ground detection with Raycast
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        if (isGrounded)
+        if (isGrounded && velocity.y < 0)
         {
-            jumpCount = 0; // Reset jumps when touching the ground
-            if (velocity.y < 0)
-                velocity.y = -2f; // Reset gravity when grounded
+            velocity.y = -2f; // Reset gravity when grounded
         }
 
         // Get input from WASD
@@ -43,13 +40,13 @@ public class PlayerMovement : MonoBehaviour
             controller.Move(moveDir.normalized * speed * Time.deltaTime);
         }
 
-        // Double Jump Mechanic
-        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
+        // Jumping
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            jumpCount++;
         }
 
+        // Apply gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
