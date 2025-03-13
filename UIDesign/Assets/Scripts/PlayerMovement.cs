@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public CharacterController controller;
-    public float speed = 6f;
+    public float maxSpeed = 6f;
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
     public Transform cameraTransform;
@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
     public float groundDistance = 0.2f;
 
-    void Update()
+    public void Update()
     {
         // Improved ground detection with Raycast
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            controller.Move(moveDir.normalized * speed * Time.deltaTime);
+            controller.Move(moveDir.normalized * maxSpeed * Time.deltaTime);
         }
 
         // Jumping
@@ -49,5 +49,10 @@ public class PlayerMovement : MonoBehaviour
         // Apply gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void UpdatePlayerMaxSpeed(float speed)
+    {
+        maxSpeed = speed;
     }
 }
